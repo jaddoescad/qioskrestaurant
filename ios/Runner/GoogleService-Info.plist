@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>548132885352-47a1q3j7jtiqfgjr2goa592padk5qtjv.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.548132885352-47a1q3j7jtiqfgjr2goa592padk5qtjv</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCwnwMJL5BMKQwjY9kaM2DymYScDlg3KI8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>548132885352</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>qioskinc.qiosk.com.restaurantQioskClient</string>
+	<key>PROJECT_ID</key>
+	<string>qiosk-94071</string>
+	<key>STORAGE_BUCKET</key>
+	<string>qiosk-94071.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:548132885352:ios:fb93b9b76e1ce790da3cdd</string>
+	<key>DATABASE_URL</key>
+	<string>https://qiosk-94071.firebaseio.com</string>
+</dict>
+</plist>

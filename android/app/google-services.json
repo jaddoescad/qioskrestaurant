@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "548132885352",
+    "firebase_url": "https://qiosk-94071.firebaseio.com",
+    "project_id": "qiosk-94071",
+    "storage_bucket": "qiosk-94071.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548132885352:android:9e80e7a5b26a5c1cda3cdd",
+        "android_client_info": {
+          "package_name": "qioskinc.qiosk.com.flutterqiosk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "548132885352-lpllbalvgl6oosbc4dhjeisq8fl1b5c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDazU7iKzfwE9fgT0UNYONNej0L6HrVfTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548132885352-lpllbalvgl6oosbc4dhjeisq8fl1b5c0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "548132885352-u6bl3ash51tvrvso4ffhk3k64av3rbrv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "qioskinc.qiosk.com.flutterqiosk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548132885352:android:96906fe8bb28cb73da3cdd",
+        "android_client_info": {
+          "package_name": "qioskinc.qiosk.com.restaurant_qiosk_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "548132885352-lpllbalvgl6oosbc4dhjeisq8fl1b5c0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDazU7iKzfwE9fgT0UNYONNej0L6HrVfTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548132885352-lpllbalvgl6oosbc4dhjeisq8fl1b5c0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "548132885352-u6bl3ash51tvrvso4ffhk3k64av3rbrv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "qioskinc.qiosk.com.flutterqiosk"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
