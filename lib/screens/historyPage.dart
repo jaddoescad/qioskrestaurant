@@ -8,8 +8,6 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../model/restaurant.dart';
-// import '../model/orders.dart';
-import 'package:flutter/cupertino.dart';
 import '../model/history.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -32,8 +30,7 @@ class _HistoryPageState extends State<HistoryPage> {
   void dispose() {
     // TODO: implement dispose
     if (_orderStream != null) {
-    _orderStream.cancel();
-
+      _orderStream.cancel();
     }
     super.dispose();
   }
@@ -51,7 +48,7 @@ class _HistoryPageState extends State<HistoryPage> {
       final midnight = new DateTime(now.year, now.month, now.day + 1)
           .toUtc()
           .millisecondsSinceEpoch;
-print('rrf');
+      print('rrf');
 
       Firestore.instance
           .collection('Orders')
@@ -64,7 +61,9 @@ print('rrf');
           .getDocuments()
           .then((docs) {
             historyModel.addOrders(docs.documents);
-            latestTime = docs.documents.last.data.containsKey('date') ? docs.documents.last.data['date'] : null;
+            latestTime = docs.documents.last.data.containsKey('date')
+                ? docs.documents.last.data['date']
+                : null;
 
             print(latestTime);
             print(docs);
@@ -139,61 +138,47 @@ print('rrf');
               color: Colors.red,
               height: 50.0,
               child: Text(
-                'date',
-                style: TextStyle(fontSize: 50),
+                'Today',
+                style: TextStyle(fontSize: 30),
               ),
             ),
-            !(orderHistory.orders.length == 0) ? GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: orderHistory.orders.length,
-                gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 400,
-                    mainAxisSpacing: 100,
-                    crossAxisSpacing: 100),
-                itemBuilder: (BuildContext context, int index) {
-                  return new GestureDetector(
-                    child: new Card(
-                      elevation: 5.0,
-                      child: new Container(
-                        alignment: Alignment.center,
-                        child: new Text(
-                            'Item ${orderHistory.orders[index].orderId}'),
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                          child: Receipt(order: orderHistory.orders[index]),
+            !(orderHistory.orders.length == 0)
+                ? GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: orderHistory.orders.length,
+                    gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        mainAxisSpacing: 50,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 30),
+                    itemBuilder: (BuildContext context, int index) {
+                      return new GestureDetector(
+                        child: new Card(
+                          child: new Container(
+                            color: kMainColor,
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    'Item ${orderHistory.orders[index].orderId}', style: TextStyle(color: Colors.white),),
+                                Text(
+                                    'Item ${orderHistory.orders[index].total}', style: TextStyle(color: Colors.white,)),
+                              ],
+                            ),
+                          ),
                         ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: Receipt(order: orderHistory.orders[index]),
+                            ),
+                          );
+                        },
                       );
-                      // showDialog(
-                      //   barrierDismissible: false,
-                      //   context: context,
-                      //   child: new CupertinoAlertDialog(
-                      //     title: new Column(
-                      //       children: <Widget>[
-                      //         new Text("GridView"),
-                      //         new Icon(
-                      //           Icons.favorite,
-                      //           color: Colors.green,
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     content: new Text("Selected Item $index"),
-                      //     actions: <Widget>[
-                      //       new FlatButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).pop();
-                      //           },
-                      //           child: new Text("OK"))
-                      //     ],
-                      //   ),
-                      // );
-                    },
-                  );
-                }): Container(),
+                    })
+                : Container(),
           ],
         ),
       )),

@@ -93,36 +93,43 @@ class _OrdersPageState extends State<OrdersPage> {
       child: 
       
       Scaffold(
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: !(orderModel.orders.length == 0) ? GridView.builder(
-            shrinkWrap: true,
-            itemCount: orderModel.orders.length,
-            gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 400,
-                mainAxisSpacing: 100,
-                // crossAxisSpacing: 100
-                ),
-            itemBuilder: (BuildContext context, int index) {
-              return new GestureDetector(
-                child: new Container(
-                  // height: 100,
-                  // width: 100,
-                  alignment: Alignment.center,
-                  child: new Text('Item ${orderModel.orders[index].orderId}'),
-                ),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => Dialog(
-                      child: Receipt(order: orderModel.orders[index]),
+        body:ListView(
+          children: <Widget>[
+            !(orderModel.orders.length == 0) ? GridView.builder(
+
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: orderModel.orders.length,
+                gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    mainAxisSpacing: 50,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 30
                     ),
+                itemBuilder: (BuildContext context, int index) {
+                  return new GestureDetector(
+                    child: new Container(
+                      color: kMainColor,
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                              'Order# ${orderModel.orders[index].orderId}', style: TextStyle(color: Colors.white)),
+                          Text('Price: ${orderModel.orders[index].total}', style: TextStyle(color: Colors.white))
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Dialog(
+                          child: Receipt(order: orderModel.orders[index]),
+                        ),
+                      );
+                    },
                   );
-                },
-              );
-            },
-          ): Container(),
+                }): Container(),
+          ],
         ),
       ),
     );
