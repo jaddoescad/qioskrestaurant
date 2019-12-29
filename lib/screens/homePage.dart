@@ -18,10 +18,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin , WidgetsBindingObserver{
   CupertinoTabController tabController;
-    final Map<int, Widget> logoWidgets = const <int, Widget>{
-    0: Text('Orders'),
-    1: Text('History'),
-  };
+
 
     final Map<int, Widget> icons = const <int, Widget>{
     0: OrdersPage(),
@@ -57,15 +54,6 @@ class HomePageState extends State<HomePage>
             brightness: Brightness.light,
             elevation: 1,
             backgroundColor: Colors.white,
-            title: CupertinoSegmentedControl<int>(
-                children: logoWidgets,
-                onValueChanged: (int val) {
-                  setState(() {
-                    sharedValue = val;
-                  });
-                },
-                groupValue: sharedValue,
-              ),
             ),
 
             body: CupertinoTabScaffold(

@@ -27,10 +27,7 @@ class _HistoryPageState extends State<HistoryPage> {
   int latestTime;
   bool loadingMoreOrder = false;
   bool loader = false;
-  final Map<int, Widget> logoWidgets = const <int, Widget>{
-    0: Text('Orders'),
-    1: Text('History'),
-  };
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -146,7 +143,7 @@ print('rrf');
                 style: TextStyle(fontSize: 50),
               ),
             ),
-            GridView.builder(
+            !(orderHistory.orders.length == 0) ? GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: orderHistory.orders.length,
@@ -196,7 +193,7 @@ print('rrf');
                       // );
                     },
                   );
-                }),
+                }): Container(),
           ],
         ),
       )),

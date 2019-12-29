@@ -33,8 +33,8 @@ class _OrdersPageState extends State<OrdersPage> {
   void dispose() {
     // TODO: implement dispose
     print('dispose');
-    if (_orderStream != null){
-    _orderStream.cancel();
+    if (_orderStream != null) {
+      _orderStream.cancel();
     }
     super.dispose();
   }
@@ -62,7 +62,11 @@ class _OrdersPageState extends State<OrdersPage> {
             .where("r_id", isEqualTo: restaurant.id)
             .where('status', isEqualTo: 'preparing')
             .orderBy('date', descending: false)
-            .startAfter([docs.documents?.isNotEmpty ?? false ? docs.documents.last['date'] : null])
+            .startAfter([
+              docs.documents?.isNotEmpty ?? false
+                  ? docs.documents.last['date']
+                  : null
+            ])
             .snapshots()
             .listen((onData) {
               onData.documentChanges.forEach((order) {
@@ -86,33 +90,41 @@ class _OrdersPageState extends State<OrdersPage> {
     return ModalProgressHUD(
       progressIndicator: Loader(context: context, loaderText: loaderText),
       inAsyncCall: loader,
-      child: Scaffold(
-          body: GridView.builder(
-              itemCount: orderModel.orders.length,
-              gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 400,
-                  mainAxisSpacing: 100,
-                  crossAxisSpacing: 100),
-              itemBuilder: (BuildContext context, int index) {
-                return new GestureDetector(
-                  child: new Card(
-                    elevation: 5.0,
-                    child: new Container(
-                      alignment: Alignment.center,
-                      child:
-                          new Text('Item ${orderModel.orders[index].orderId}'),
+      child: 
+      
+      Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: !(orderModel.orders.length == 0) ? GridView.builder(
+            shrinkWrap: true,
+            itemCount: orderModel.orders.length,
+            gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 400,
+                mainAxisSpacing: 100,
+                // crossAxisSpacing: 100
+                ),
+            itemBuilder: (BuildContext context, int index) {
+              return new GestureDetector(
+                child: new Container(
+                  // height: 100,
+                  // width: 100,
+                  alignment: Alignment.center,
+                  child: new Text('Item ${orderModel.orders[index].orderId}'),
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => Dialog(
+                      child: Receipt(order: orderModel.orders[index]),
                     ),
-                  ),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => Dialog(
-                        child: Receipt(order: orderModel.orders[index]),
-                      ),
-                    );
-                  },
-                );
-              })),
+                  );
+                },
+              );
+            },
+          ): Container(),
+        ),
+      ),
     );
   }
 }
@@ -325,7 +337,7 @@ class Receipt extends StatelessWidget {
                 var resp = await callable.call(<String, dynamic>{
                   'orderId': order.orderId,
                   'notification_id': order.notificationId
-                  
+
                   // 'uid':
                   // "uid": user.uid.toString(),
                   // "email": email,
