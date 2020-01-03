@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import '../screens/ordersPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../constants.dart';
@@ -100,98 +100,139 @@ class _HistoryPageState extends State<HistoryPage> {
       progressIndicator: Loader(context: context, loaderText: loaderText),
       inAsyncCall: loader,
       child: Scaffold(
-          body: !(orderHistory.orders.length == 0)
-              ? NotificationListener<ScrollNotification>(
-                  onNotification: (scrollNotification) {
-                    if (scrollNotification.metrics.pixels ==
-                        scrollNotification.metrics.maxScrollExtent) {
-                      if (loadingMoreOrder == false) {
-                        loadingMoreOrder = true;
-                        Firestore.instance
-                            .collection('Orders')
-                            .where("r_id", isEqualTo: restaurant.id)
-                            .where('archived', isEqualTo: false)
-                            .orderBy('date', descending: true)
-                            .startAfter([latestTime])
-                            .endAt([lastMidnight])
-                            .limit(5)
-                            .getDocuments()
-                            .then((docs) {
-                              docs.documents.forEach((order) {
-                                // if (order.type == DocumentChangeType.added) {
-                                latestTime = order.data['date'];
-                                orderHistory.addSingleOrder([order]);
-                              });
-                              loadingMoreOrder = false;
-                              // orderHistory.addOrders(docs.documents);
-                              //  setState(() {
-                              //     items_number += 10 ;
-                              //  });
-                            });
-                      }
-                    }
-                  },
-                  child: ListView(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.red,
-                        height: 50.0,
-                        child: Text(
-                          'Today',
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ),
-                      GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: orderHistory.orders.length,
-                          gridDelegate:
-                              new SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 200,
-                                  mainAxisSpacing: 50,
-                                  childAspectRatio: 1,
-                                  crossAxisSpacing: 30),
-                          itemBuilder: (BuildContext context, int index) {
-                            return new GestureDetector(
-                              child: new Card(
-                                child: new Container(
-                                  color: kMainColor,
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Text(
-                                        'Item ${orderHistory.orders[index].orderId}',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      Text(
-                                          'Item ${orderHistory.orders[index].total}',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (_) => Dialog(
-                                    child: Receipt(
-                                        order: orderHistory.orders[index]),
-                                  ),
-                                );
-                              },
-                            );
-                          }),
-                    ],
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text("Les Moulins La Fayette"),
+                  accountEmail: Text("lmlfqiosk@gmail.com"),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).platform == TargetPlatform.iOS
+                            ? Colors.blue
+                            : Colors.white,
+                    child: Text(
+                      "LM",
+                      style: TextStyle(fontSize: 40.0),
+                    ),
                   ),
-                )
-              :
-     Container()
-    ),
+                ),
+                ListTile(
+                  title: Text('Incomplete Orders'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                  },
+                ),
+                ListTile(
+                  title: Text('Orders Completed Today'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                  },
+                ),
+                ListTile(
+                  title: Text('Sign Out'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+          appBar: AppBar(
+            // automaticallyImplyLeading: false,
+            iconTheme: IconThemeData(color: kMainColor),
+            brightness: Brightness.light,
+            elevation: 1,
+            backgroundColor: Colors.white,
+            ),    
+          body: NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+          if (scrollNotification.metrics.pixels ==
+              scrollNotification.metrics.maxScrollExtent) {
+            if (loadingMoreOrder == false) {
+              loadingMoreOrder = true;
+              Firestore.instance
+                  .collection('Orders')
+                  .where("r_id", isEqualTo: restaurant.id)
+                  .where('archived', isEqualTo: false)
+                  .orderBy('date', descending: true)
+                  .startAfter([latestTime])
+                  .endAt([lastMidnight])
+                  .limit(5)
+                  .getDocuments()
+                  .then((docs) {
+                    docs.documents.forEach((order) {
+                      // if (order.type == DocumentChangeType.added) {
+                      latestTime = order.data['date'];
+                      orderHistory.addSingleOrder([order]);
+                    });
+                    loadingMoreOrder = false;
+                    // orderHistory.addOrders(docs.documents);
+                    //  setState(() {
+                    //     items_number += 10 ;
+                    //  });
+                  });
+            }
+          }
+        },
+        child: ListView(
+          children: <Widget>[
+            Container(
+              color: Colors.red,
+              height: 50.0,
+              child: Text(
+                'Today',
+                style: TextStyle(fontSize: 30),
+              ),
+            ),
+            !(orderHistory.orders.length == 0)
+                ? GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: orderHistory.orders.length,
+                    gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        mainAxisSpacing: 50,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 30),
+                    itemBuilder: (BuildContext context, int index) {
+                      return new GestureDetector(
+                        child: new Card(
+                          child: new Container(
+                            color: kMainColor,
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    'Item ${orderHistory.orders[index].orderId}', style: TextStyle(color: Colors.white),),
+                                Text(
+                                    'Item ${orderHistory.orders[index].total}', style: TextStyle(color: Colors.white,)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              child: Receipt(order: orderHistory.orders[index]),
+                            ),
+                          );
+                        },
+                      );
+                    })
+                : Container(),
+          ],
+        ),
+      )),
     );
   }
 }
+
 
 class Receipt extends StatelessWidget {
   const Receipt({
