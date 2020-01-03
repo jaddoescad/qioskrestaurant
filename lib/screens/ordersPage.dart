@@ -161,6 +161,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       alignment: Alignment.center,
                       child: Column(
                         children: <Widget>[
+                        if (orderModel.orders[index].loading == true) Container(height: 50, width: 50, color: Colors.red,),
                           Text(
                               'Order# ${orderModel.orders[index].orderId}', style: TextStyle(color: Colors.white)),
                           Text('Price: ${orderModel.orders[index].total}', style: TextStyle(color: Colors.white))

@@ -34,6 +34,7 @@ class Order {
   int date;
   bool archived;
   String notificationId;
+  bool loading;
 
   Map<String, OrderItem> _orderItems = {};
   Map<String, OrderItem> get orderItems {
@@ -50,7 +51,8 @@ class Order {
       this.date,
       this.rname,
       this.archived,
-      this.notificationId
+      this.notificationId,
+      this.loading = false
       });
 
   void addOrderItem(item) {
@@ -79,6 +81,16 @@ class RestaurantOrders with ChangeNotifier {
 
   clear() {
     _orders = [];
+  }
+
+  loadOrder(Order order) {
+    order.loading = true;
+    notifyListeners();
+  }
+
+    unloadOrder(Order order) {
+    order.loading = false;
+    notifyListeners();
   }
 
   removeOrder(orderId) {
