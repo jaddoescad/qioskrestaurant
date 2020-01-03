@@ -187,7 +187,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       showDialog(
                         context: context,
                         builder: (_) => Dialog(
-                          child: Receipt(order: orderModel.orders[index]),
+                          child: Receipt(order: orderModel.orders[index], rOrders:orderModel ,),
                         ),
                       );
                     },
@@ -204,9 +204,11 @@ class Receipt extends StatelessWidget {
   const Receipt({
     Key key,
     @required this.order,
+    this.rOrders
   }) : super(key: key);
 
   final Order order;
+  final RestaurantOrders rOrders;
 
   @override
   Widget build(BuildContext context) {
@@ -394,7 +396,7 @@ class Receipt extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              // Navigator.pop(context);
+              Navigator.pop(context);
               //make order on firebase complete thru cloud function
               //remove from array
 
@@ -421,8 +423,7 @@ class Receipt extends StatelessWidget {
                   throw (resp.data['error']);
                 } else {
                   print('success');
-                  final orderModel = Provider.of<RestaurantOrders>(context);
-                  orderModel.removeOrder(order.orderId);
+                  rOrders.removeOrder(order.orderId);
                   // Navigator.pop(context);
 
                   //remove from array
