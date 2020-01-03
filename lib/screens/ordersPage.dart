@@ -92,108 +92,116 @@ class _OrdersPageState extends State<OrdersPage> {
     return ModalProgressHUD(
       progressIndicator: Loader(context: context, loaderText: loaderText),
       inAsyncCall: loader,
-      child: 
-      Scaffold(
-          drawer: Drawer(
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  accountName: Text("Les Moulins La Fayette"),
-                  accountEmail: Text("lmlfqiosk@gmail.com"),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).platform == TargetPlatform.iOS
-                            ? Colors.blue
-                            : Colors.white,
-                    child: Text(
-                      "LM",
-                      style: TextStyle(color: Colors.black, fontSize: 40.0),
-                    ),
+      child: Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text("Les Moulins La Fayette"),
+                accountEmail: Text("lmlfqiosk@gmail.com"),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor:
+                      Theme.of(context).platform == TargetPlatform.iOS
+                          ? Colors.blue
+                          : Colors.white,
+                  child: Text(
+                    "LM",
+                    style: TextStyle(color: Colors.black, fontSize: 40.0),
                   ),
                 ),
-                ListTile(
-                  title: Text('Incomplete Orders'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
-                  },
-                ),
-                ListTile(
-                  title: Text('Orders Completed Today'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
-                  },
-                ),
-                ListTile(
-                  title: Text('Sign Out'),
-                  onTap: () async {
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      final history = Provider.of<RestaurantHistory>(context);
-                      final orders = Provider.of<RestaurantOrders>(context);
-                      final restaurant = Provider.of<Restaurant>(context);
-                      history.clear();
-                      orders.clear();
-                      restaurant.clear();
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    } catch (error) {
-                      print(error);
-                      showErrorDialog(
-                          context, 'Sign Out Was Not Successful');
-                    }
-                  },
-                ),
-              ],
-            ),
+              ),
+              ListTile(
+                title: Text('Incomplete Orders'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushReplacement(
+                      CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                },
+              ),
+              ListTile(
+                title: Text('Orders Completed Today'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).pushReplacement(
+                      CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                },
+              ),
+              ListTile(
+                title: Text('Sign Out'),
+                onTap: () async {
+                  try {
+                    await FirebaseAuth.instance.signOut();
+                    final history = Provider.of<RestaurantHistory>(context);
+                    final orders = Provider.of<RestaurantOrders>(context);
+                    final restaurant = Provider.of<Restaurant>(context);
+                    history.clear();
+                    orders.clear();
+                    restaurant.clear();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  } catch (error) {
+                    print(error);
+                    showErrorDialog(context, 'Sign Out Was Not Successful');
+                  }
+                },
+              ),
+            ],
           ),
-          appBar: AppBar(
-            // automaticallyImplyLeading: false,
-            iconTheme: IconThemeData(color: kMainColor),
-            brightness: Brightness.light,
-            elevation: 1,
-            backgroundColor: Colors.white,
-            ),    
-        body:ListView(
+        ),
+        appBar: AppBar(
+          // automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: kMainColor),
+          brightness: Brightness.light,
+          elevation: 1,
+          backgroundColor: Colors.white,
+        ),
+        body: ListView(
           children: <Widget>[
-            !(orderModel.orders.length == 0) ? GridView.builder(
-
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: orderModel.orders.length,
-                gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    mainAxisSpacing: 50,
-                    childAspectRatio: 1,
-                    crossAxisSpacing: 30
-                    ),
-                itemBuilder: (BuildContext context, int index) {
-                  return new GestureDetector(
-                    child: new Container(
-                      color: kMainColor,
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: <Widget>[
-                        if (orderModel.orders[index].loading == true) Container(height: 50, width: 50, color: Colors.red,),
-                          Text(
-                              'Order# ${orderModel.orders[index].orderId}', style: TextStyle(color: Colors.white)),
-                          Text('Price: ${orderModel.orders[index].total}', style: TextStyle(color: Colors.white))
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => Dialog(
-                          child: Receipt(order: orderModel.orders[index]),
+            !(orderModel.orders.length == 0)
+                ? GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: orderModel.orders.length,
+                    gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200,
+                        mainAxisSpacing: 50,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 30),
+                    itemBuilder: (BuildContext context, int index) {
+                      return ModalProgressHUD(
+                        inAsyncCall: orderModel.orders[index].loading,
+                        child: new GestureDetector(
+                          child: new Container(
+                            color: kMainColor,
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    'Order# ${orderModel.orders[index].orderId}',
+                                    style: TextStyle(color: Colors.white)),
+                                Text('Price: ${orderModel.orders[index].total}',
+                                    style: TextStyle(color: Colors.white))
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => Dialog(
+                                child: Receipt(
+                                  order: orderModel.orders[index],
+                                  rOrders: orderModel,
+                                  prevContext: context,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
-                    },
-                  );
-                }): Container(),
+                    })
+                : Container(),
           ],
         ),
       ),
@@ -202,12 +210,12 @@ class _OrdersPageState extends State<OrdersPage> {
 }
 
 class Receipt extends StatelessWidget {
-  const Receipt({
-    Key key,
-    @required this.order,
-  }) : super(key: key);
+  const Receipt({Key key, @required this.order, this.rOrders, this.prevContext})
+      : super(key: key);
 
   final Order order;
+  final RestaurantOrders rOrders;
+  final BuildContext prevContext;
 
   @override
   Widget build(BuildContext context) {
@@ -395,7 +403,8 @@ class Receipt extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              // Navigator.pop(context);
+              Navigator.pop(context);
+              rOrders.loadOrder(order);
               //make order on firebase complete thru cloud function
               //remove from array
 
@@ -418,23 +427,16 @@ class Receipt extends StatelessWidget {
 
                 if (resp.data.containsKey('error')) {
                   print(resp.data['error']);
+                  rOrders.unloadOrder(order);
 
                   throw (resp.data['error']);
                 } else {
                   print('success');
-                  final orderModel = Provider.of<RestaurantOrders>(context);
-                  orderModel.removeOrder(order.orderId);
-                  // Navigator.pop(context);
-
-                  //remove from array
-                  // userProvider.changeUID(
-                  //     resp.data['user']['uid'],
-                  //     resp.data['user']['name'],
-                  //     resp.data['user']['email'],
-                  //     resp.data['user']['stripeId']);
+                  rOrders.removeOrder(order.orderId);
                 }
               } catch (error) {
-                showErrorDialog(context, error.toString());
+                rOrders.unloadOrder(order);
+                showErrorDialog(prevContext, error.toString());
               }
             },
             child: Container(
@@ -457,4 +459,3 @@ class Receipt extends StatelessWidget {
         ]));
   }
 }
-
