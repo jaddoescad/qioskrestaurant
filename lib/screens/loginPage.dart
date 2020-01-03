@@ -36,7 +36,12 @@ class _LoginPageState extends State<LoginPage> {
     authHandler.checkIfUserExists(context).then((success) {
       print(success);
       if (success == true) {
-        Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+        Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => WillPopScope(
+          onWillPop: () async {
+           return false;
+          },
+        child: OrdersPage(),
+        )));
         setState(() {
           loader = false;
         });
@@ -190,7 +195,12 @@ class _LoginPageState extends State<LoginPage> {
           });
 
     //       print('success');
-          Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+         Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => WillPopScope(
+          onWillPop: () async {
+           return false;
+          },
+        child: OrdersPage(),
+        )));
 
         });
         } catch (error) {

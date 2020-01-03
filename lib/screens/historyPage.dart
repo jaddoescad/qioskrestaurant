@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:restaurant_qiosk_client/widgets/errorMessage.dart';
 import '../screens/ordersPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../model/restaurant.dart';
 import '../model/history.dart';
+import '../model/orders.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key key}) : super(key: key);
@@ -21,7 +24,6 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   String loaderText = "Loading Orders...";
   StreamSubscription<QuerySnapshot> _orderStream;
-
   int latestTime;
   bool loadingMoreOrder = false;
   bool loader = false;
@@ -115,7 +117,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             : Colors.white,
                     child: Text(
                       "LM",
-                      style: TextStyle(fontSize: 40.0),
+                      style: TextStyle(color: Colors.black, fontSize: 40.0),
                     ),
                   ),
                 ),
@@ -123,20 +125,34 @@ class _HistoryPageState extends State<HistoryPage> {
                   title: Text('Incomplete Orders'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Orders Completed Today'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Sign Out'),
-                  onTap: () {
-                    Navigator.pop(context);
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      final history = Provider.of<RestaurantHistory>(context);
+                      final orders = Provider.of<RestaurantOrders>(context);
+                      final restaurant = Provider.of<Restaurant>(context);
+                      history.clear();
+                      orders.clear();
+                      restaurant.clear();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    } catch (error) {
+                      print(error);
+                      showErrorDialog(
+                          context, 'Sign Out Was Not Successful');
+                    }
                   },
                 ),
               ],

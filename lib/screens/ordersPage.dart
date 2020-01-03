@@ -10,7 +10,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../model/restaurant.dart';
 import '../model/orders.dart';
+import '../model/history.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({Key key}) : super(key: key);
@@ -107,7 +109,7 @@ class _OrdersPageState extends State<OrdersPage> {
                             : Colors.white,
                     child: Text(
                       "LM",
-                      style: TextStyle(fontSize: 40.0),
+                      style: TextStyle(color: Colors.black, fontSize: 40.0),
                     ),
                   ),
                 ),
@@ -115,20 +117,34 @@ class _OrdersPageState extends State<OrdersPage> {
                   title: Text('Incomplete Orders'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Orders Completed Today'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Sign Out'),
-                  onTap: () {
-                    Navigator.pop(context);
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      final history = Provider.of<RestaurantHistory>(context);
+                      final orders = Provider.of<RestaurantOrders>(context);
+                      final restaurant = Provider.of<Restaurant>(context);
+                      history.clear();
+                      orders.clear();
+                      restaurant.clear();
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    } catch (error) {
+                      print(error);
+                      showErrorDialog(
+                          context, 'Sign Out Was Not Successful');
+                    }
                   },
                 ),
               ],
@@ -441,3 +457,4 @@ class Receipt extends StatelessWidget {
         ]));
   }
 }
+
