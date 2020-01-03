@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../screens/loginPage.dart';
 import '../util/helper.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../screens/homePage.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key key}) : super(key: key);

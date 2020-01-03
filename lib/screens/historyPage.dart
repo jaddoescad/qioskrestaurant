@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import '../screens/ordersPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../constants.dart';
@@ -102,6 +102,55 @@ class _HistoryPageState extends State<HistoryPage> {
       progressIndicator: Loader(context: context, loaderText: loaderText),
       inAsyncCall: loader,
       child: Scaffold(
+          drawer: Drawer(
+            child: ListView(
+              // Important: Remove any padding from the ListView.
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text("Les Moulins La Fayette"),
+                  accountEmail: Text("lmlfqiosk@gmail.com"),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).platform == TargetPlatform.iOS
+                            ? Colors.blue
+                            : Colors.white,
+                    child: Text(
+                      "LM",
+                      style: TextStyle(fontSize: 40.0),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: Text('Incomplete Orders'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                  },
+                ),
+                ListTile(
+                  title: Text('Orders Completed Today'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                  },
+                ),
+                ListTile(
+                  title: Text('Sign Out'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+          appBar: AppBar(
+            // automaticallyImplyLeading: false,
+            iconTheme: IconThemeData(color: kMainColor),
+            brightness: Brightness.light,
+            elevation: 1,
+            backgroundColor: Colors.white,
+            ),    
           body: NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (scrollNotification.metrics.pixels ==

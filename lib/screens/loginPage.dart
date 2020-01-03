@@ -9,7 +9,6 @@ import '../widgets/Loader.dart';
 import '../screens/ordersPage.dart';
 import '../widgets/errorMessage.dart';
 import '../Networking/Auth.dart';
-import '../screens/homePage.dart';
 
 typedef void ChangeAuthPage(String pageString);
 
@@ -173,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
           });
 
     //       print('success');
-          Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HomePage()));
+          Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
 
         });
         } catch (error) {
@@ -183,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
           print(error.toString());
           //clear provider
           //signout
-          showErrorDialog(context, 'There was an error an error authenticating user');
+          showErrorDialog(context, 'There was an error authenticating user');
         }
       }
     }
