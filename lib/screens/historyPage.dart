@@ -125,14 +125,14 @@ class _HistoryPageState extends State<HistoryPage> {
                   title: Text('Incomplete Orders'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Orders Completed Today'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
                   },
                 ),
                 ListTile(
