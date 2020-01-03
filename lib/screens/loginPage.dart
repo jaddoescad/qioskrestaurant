@@ -26,10 +26,27 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   _LoginData _data = new _LoginData();
-  bool loader = false;
+  bool loader = true;
   var authHandler = Auth();
   final loaderText = 'Logging In...';
 
+  @override
+  void initState() {
+    super.initState();
+    authHandler.checkIfUserExists(context).then((success) {
+      print(success);
+      if (success == true) {
+        Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => HomePage()));
+        setState(() {
+          loader = false;
+        });
+      } else {
+        setState(() {
+          loader = false;
+        });
+      }
+    });
+  }
   /// Normally the signin buttons should be contained in the SignInPage
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,7 @@ class Auth with ChangeNotifier {
     AuthResult result =
         await auth.signInWithEmailAndPassword(email: email, password: password);
     final FirebaseUser user = result.user;
-          final restaurant = Provider.of<Restaurant>(context);
+    final restaurant = Provider.of<Restaurant>(context);
 
     assert(user != null);
     assert(await user.getIdToken() != null);
@@ -32,14 +32,13 @@ class Auth with ChangeNotifier {
         .where("email", isEqualTo: user.email)
         .getDocuments();
 
-    
     if (restaurantDoc.documents.isNotEmpty) {
-          restaurant.setRestaurant(restaurantDoc.documents[0].documentID, user.email);
-
+      restaurant.setRestaurant(
+          restaurantDoc.documents[0].documentID, user.email);
     } else {
       await FirebaseAuth.instance.signOut();
       restaurant.clear();
-      throw('could not find restaurant');
+      throw ('could not find restaurant');
     }
 
     //get restaurnt info from email
@@ -94,24 +93,26 @@ class Auth with ChangeNotifier {
   //   }
   // }
 
-  // Future checkIfUserExists(context) async {
-  //   await FirebaseAuth.instance.currentUser().then((firebaseUser) async {
-  //     if (firebaseUser != null) {
-  //       var document = await Firestore.instance
-  //           .collection('Users')
-  //           .document(firebaseUser.uid.toString())
-  //           .get();
-  //       final userProvider = Provider.of<User>(context);
-  //       final payment = Provider.of<PaymentModel>(context);
-  //       userProvider.changeUID(document['uid'], document['name'],
-  //           document['email'], document['stripe_id']);
-  //       if (document.data.containsKey('source')) {
-  //         final source = document['source'];
-  //         payment.setCard(
-  //             source['id'], source['card']['last4'], source['card']['brand']);
-  //         //get orders
-  //       }
-  //     }
-  //   });
-  // }
+  Future<bool> checkIfUserExists(context) async {
+    bool success = false;
+    await FirebaseAuth.instance.currentUser().then((firebaseUser) async {
+      if (firebaseUser != null) {
+        final restaurantDoc = await Firestore.instance
+            .collection('Restaurants')
+            .where("email", isEqualTo: firebaseUser.email)
+            .getDocuments();
+        final restaurant = Provider.of<Restaurant>(context);
+        if (restaurantDoc.documents.isNotEmpty) {
+          restaurant.setRestaurant(
+              restaurantDoc.documents[0].documentID, firebaseUser.email);
+          success = true;
+        } else {
+          await FirebaseAuth.instance.signOut();
+          restaurant.clear();
+          throw ('could not find restaurant');
+        }
+      }
+    });
+    return success;
+  }
 }
