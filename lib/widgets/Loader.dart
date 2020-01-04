@@ -35,9 +35,9 @@ class Loader extends StatelessWidget {
                   topRight: const Radius.circular(20.0),
                   bottomLeft: const Radius.circular(20.0),
                   bottomRight: const Radius.circular(20.0))),
-          constraints: BoxConstraints(minWidth: 250, maxWidth: 250),
-          height: MediaQuery.of(context).size.width / 1.5,
-          width: MediaQuery.of(context).size.width / 1.5,
+          // constraints: BoxConstraints(minWidth: 250, maxWidth: 250),
+          height: 200,
+          width: 200,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
