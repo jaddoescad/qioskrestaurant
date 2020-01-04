@@ -51,7 +51,9 @@ class _HistoryPageState extends State<HistoryPage> {
       final midnight = new DateTime(now.year, now.month, now.day + 1)
           .toUtc()
           .millisecondsSinceEpoch;
-
+      setState(() {
+        loader = true;
+      });
       Firestore.instance
           .collection('Orders')
           .where("r_id", isEqualTo: restaurant.id)
@@ -63,7 +65,9 @@ class _HistoryPageState extends State<HistoryPage> {
           .getDocuments()
           .then((docs) {
             historyModel.addOrders(docs.documents);
-
+            setState(() {
+              loader = false;
+            });
             _orderStream = Firestore.instance
                 .collection('Orders')
                 .where("r_id", isEqualTo: restaurant.id)
@@ -83,6 +87,12 @@ class _HistoryPageState extends State<HistoryPage> {
                     } else if (order.type == DocumentChangeType.removed) {}
                   });
                 });
+          })
+          .catchError((onError) {
+            setState(() {
+              loader = false;
+            });
+            showErrorDialog(context, 'Error Loading Orders');
           });
     });
   }
@@ -126,14 +136,16 @@ class _HistoryPageState extends State<HistoryPage> {
                   title: Text('Incomplete Orders'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => OrdersPage()));
+                    Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(builder: (ctx) => OrdersPage()));
                   },
                 ),
                 ListTile(
                   title: Text('Orders Completed Today'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (ctx) => HistoryPage()));
+                    Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(builder: (ctx) => HistoryPage()));
                   },
                 ),
                 ListTile(
@@ -151,8 +163,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       Navigator.of(context).pop();
                     } catch (error) {
                       print(error);
-                      showErrorDialog(
-                          context, 'Sign Out Was Not Successful');
+                      showErrorDialog(context, 'Sign Out Was Not Successful');
                     }
                   },
                 ),
@@ -161,138 +172,139 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           appBar: AppBar(
             // automaticallyImplyLeading: false,
-            title: Text('Orders Completed Today', style: TextStyle(color: kMainColor),),
+            title: Text(
+              'Orders Completed Today',
+              style: TextStyle(color: kMainColor),
+            ),
             iconTheme: IconThemeData(color: kMainColor),
             brightness: Brightness.light,
             elevation: 1,
             backgroundColor: Colors.white,
-            ),    
+          ),
           body: NotificationListener<ScrollNotification>(
-        onNotification: (scrollNotification) {
-          if (scrollNotification.metrics.pixels ==
-              scrollNotification.metrics.maxScrollExtent) {
-            if (loadingMoreOrder == false) {
-              loadingMoreOrder = true;
-              Firestore.instance
-                  .collection('Orders')
-                  .where("r_id", isEqualTo: restaurant.id)
-                  .where('archived', isEqualTo: false)
-                  .orderBy('date', descending: true)
-                  .startAfter([latestTime])
-                  .endAt([lastMidnight])
-                  .limit(5)
-                  .getDocuments()
-                  .then((docs) {
-                    docs.documents.forEach((order) {
-                      // if (order.type == DocumentChangeType.added) {
-                      latestTime = order.data['date'];
-                      orderHistory.addSingleOrder([order]);
-                    });
-                    loadingMoreOrder = false;
-                    // orderHistory.addOrders(docs.documents);
-                    //  setState(() {
-                    //     items_number += 10 ;
-                    //  });
-                  });
-            }
-          }
-        },
-        child: ListView(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(top: 10, left: 20, bottom: 10),
-              color: Colors.red,
-              // height: 50.0,
-              child: Text(
-                'Today',
-                style: TextStyle(fontSize: 30),
-              ),
+            onNotification: (scrollNotification) {
+              if (scrollNotification.metrics.pixels ==
+                  scrollNotification.metrics.maxScrollExtent) {
+                if (loadingMoreOrder == false) {
+                  loadingMoreOrder = true;
+                  Firestore.instance
+                      .collection('Orders')
+                      .where("r_id", isEqualTo: restaurant.id)
+                      .where('archived', isEqualTo: false)
+                      .orderBy('date', descending: true)
+                      .startAfter([latestTime])
+                      .endAt([lastMidnight])
+                      .limit(5)
+                      .getDocuments()
+                      .then((docs) {
+                        docs.documents.forEach((order) {
+                          // if (order.type == DocumentChangeType.added) {
+                          latestTime = order.data['date'];
+                          orderHistory.addSingleOrder([order]);
+                        });
+                        loadingMoreOrder = false;
+                        // orderHistory.addOrders(docs.documents);
+                        //  setState(() {
+                        //     items_number += 10 ;
+                        //  });
+                      });
+                }
+              }
+            },
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 10, left: 20, bottom: 10),
+                  color: kMainColor,
+                  // height: 50.0,
+                  child: Text(
+                    'Today',
+                    style: TextStyle(fontSize: 30, color: Colors.white),
+                  ),
+                ),
+                !(orderHistory.orders.length == 0)
+                    ? Container(
+                        padding: EdgeInsets.all(15),
+                        child: GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: orderHistory.orders.length,
+                            gridDelegate:
+                                new SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    mainAxisSpacing: 50,
+                                    childAspectRatio: 1,
+                                    crossAxisSpacing: 30),
+                            itemBuilder: (BuildContext context, int index) {
+                              return new GestureDetector(
+                                child: Stack(
+                                  children: <Widget>[
+                                    new Container(
+                                      padding: EdgeInsets.only(top: 10),
+                                      color: kMainColor,
+                                      alignment: Alignment.center,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text('Order#',
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                          Text(
+                                              '${orderHistory.orders[index].orderId}',
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ],
+                                      ),
+                                    ),
+
+                                    Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                              '${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(orderHistory.orders[index].date))}',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 25)),
+                                          Text(
+                                              '\$${orderHistory.orders[index].total.toStringAsFixed(2)}',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 15)),
+                                        ],
+                                      ),
+                                    )
+                                    // Center(
+                                    //   child: Text(
+                                    //       '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
+                                    //       style: TextStyle(
+                                    //           color: Colors.white,
+                                    //           fontWeight: FontWeight.w800,
+                                    //           fontSize: 25)),
+                                    // )
+                                  ],
+                                ),
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      child: Receipt(
+                                          order: orderHistory.orders[index]),
+                                    ),
+                                  );
+                                },
+                              );
+                            }),
+                      )
+                    : Container(),
+              ],
             ),
-            !(orderHistory.orders.length == 0)
-                ? Container(
-                  padding: EdgeInsets.all(15),
-                  child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: orderHistory.orders.length,
-                      gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          mainAxisSpacing: 50,
-                          childAspectRatio: 1,
-                          crossAxisSpacing: 30),
-                      itemBuilder: (BuildContext context, int index) {
-                        return new GestureDetector(
-                          child: Stack(
-                                children: <Widget>[
-                                  new Container(
-                                    padding: EdgeInsets.only(top: 10),
-                                    color: kMainColor,
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text('Order#',
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                        Text(
-                                            '${orderHistory.orders[index].orderId}',
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ],
-                                    ),
-                                  ),
-
-                                  Center(
-
-                                    
-
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                            '${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(orderHistory.orders[index].date))}',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 25)),
-
-                                                Text(
-                                        '\$${orderHistory.orders[index].total.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 15)),
-                                      ],
-                                    ),
-                                  )
-                                  // Center(
-                                  //   child: Text(
-                                  //       '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
-                                  //       style: TextStyle(
-                                  //           color: Colors.white,
-                                  //           fontWeight: FontWeight.w800,
-                                  //           fontSize: 25)),
-                                  // )
-                                ],
-                              ),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                child: Receipt(order: orderHistory.orders[index]),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                )
-                : Container(),
-          ],
-        ),
-      )),
+          )),
     );
   }
 }
-
 
 class Receipt extends StatelessWidget {
   const Receipt({
@@ -309,7 +321,7 @@ class Receipt extends StatelessWidget {
         child: Column(children: <Widget>[
           Container(
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.grey,
                 border:
                     Border(bottom: BorderSide(color: Colors.grey, width: 0.5))),
             height: 50,

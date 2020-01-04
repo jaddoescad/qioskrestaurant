@@ -49,6 +49,9 @@ class _OrdersPageState extends State<OrdersPage> {
       final restaurant = Provider.of<Restaurant>(context);
       print(restaurant.id);
       final orderModel = Provider.of<RestaurantOrders>(context);
+      setState(() {
+        loader = true;
+      });
       Firestore.instance
           .collection('Orders')
           .where("r_id", isEqualTo: restaurant.id)
@@ -59,6 +62,9 @@ class _OrdersPageState extends State<OrdersPage> {
         if (docs.documents?.isNotEmpty ?? false) {
           orderModel.addOrders(docs.documents);
         }
+        setState(() {
+          loader = false;
+        });
         _orderStream = Firestore.instance
             .collection('Orders')
             .where("r_id", isEqualTo: restaurant.id)
@@ -78,6 +84,11 @@ class _OrdersPageState extends State<OrdersPage> {
                 } else if (order.type == DocumentChangeType.removed) {}
               });
             });
+      }).catchError((onError) {
+        setState(() {
+          loader = true;
+        });
+        showErrorDialog(context, onError.toString());
       });
     });
   }
@@ -200,9 +211,6 @@ class _OrdersPageState extends State<OrdersPage> {
                                 ),
 
                                 Center(
-
-                                  
-
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
@@ -212,13 +220,12 @@ class _OrdersPageState extends State<OrdersPage> {
                                               color: Colors.white,
                                               fontWeight: FontWeight.w800,
                                               fontSize: 25)),
-
-                                              Text(
-                                      '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 15)),
+                                      Text(
+                                          '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 15)),
                                     ],
                                   ),
                                 )
