@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import 'package:camera/camera.dart';
 import 'package:restaurant_qiosk_client/screens/loginPage.dart';
 import './constants.dart';
 import './screens/splashScreen.dart';
@@ -14,11 +13,9 @@ import './model/history.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
-List<CameraDescription> cameras;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  cameras = await availableCameras();
   // debugPaintSizeEnabled = true; //         <--- enable visual rendering
   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
       .then((_) {

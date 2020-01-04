@@ -13,6 +13,7 @@ import '../model/orders.dart';
 import '../model/history.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({Key key}) : super(key: key);
@@ -33,7 +34,6 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     print('dispose');
     if (_orderStream != null) {
       _orderStream.cancel();
@@ -152,57 +152,104 @@ class _OrdersPageState extends State<OrdersPage> {
         ),
         appBar: AppBar(
           // automaticallyImplyLeading: false,
+          title: Text(
+            'Incomplete Orders',
+            style: TextStyle(color: kMainColor),
+          ),
           iconTheme: IconThemeData(color: kMainColor),
           brightness: Brightness.light,
           elevation: 1,
           backgroundColor: Colors.white,
         ),
-        body: ListView(
-          children: <Widget>[
-            !(orderModel.orders.length == 0)
-                ? GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: orderModel.orders.length,
-                    gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        mainAxisSpacing: 50,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 30),
-                    itemBuilder: (BuildContext context, int index) {
-                      return ModalProgressHUD(
-                        inAsyncCall: orderModel.orders[index].loading,
-                        child: new GestureDetector(
-                          child: new Container(
-                            color: kMainColor,
-                            alignment: Alignment.center,
-                            child: Column(
+        body: Container(
+          padding: EdgeInsets.all(15),
+          child: ListView(
+            children: <Widget>[
+              !(orderModel.orders.length == 0)
+                  ? GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: orderModel.orders.length,
+                      gridDelegate:
+                          new SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200,
+                              mainAxisSpacing: 50,
+                              childAspectRatio: 1,
+                              crossAxisSpacing: 30),
+                      itemBuilder: (BuildContext context, int index) {
+                        return ModalProgressHUD(
+                          inAsyncCall: orderModel.orders[index].loading,
+                          child: new GestureDetector(
+                            child: Stack(
                               children: <Widget>[
-                                Text(
-                                    'Order# ${orderModel.orders[index].orderId}',
-                                    style: TextStyle(color: Colors.white)),
-                                Text('Price: ${orderModel.orders[index].total}',
-                                    style: TextStyle(color: Colors.white))
+                                new Container(
+                                  padding: EdgeInsets.only(top: 10),
+                                  color: kMainColor,
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text('Order#',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      Text(
+                                          '${orderModel.orders[index].orderId}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ],
+                                  ),
+                                ),
+
+                                Center(
+
+                                  
+
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                          '${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(orderModel.orders[index].date))}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 25)),
+
+                                              Text(
+                                      '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15)),
+                                    ],
+                                  ),
+                                )
+                                // Center(
+                                //   child: Text(
+                                //       '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
+                                //       style: TextStyle(
+                                //           color: Colors.white,
+                                //           fontWeight: FontWeight.w800,
+                                //           fontSize: 25)),
+                                // )
                               ],
                             ),
-                          ),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                child: Receipt(
-                                  order: orderModel.orders[index],
-                                  rOrders: orderModel,
-                                  prevContext: context,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => Dialog(
+                                  child: Receipt(
+                                    order: orderModel.orders[index],
+                                    rOrders: orderModel,
+                                    prevContext: context,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    })
-                : Container(),
-          ],
+                              );
+                            },
+                          ),
+                        );
+                      })
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

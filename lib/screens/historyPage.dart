@@ -12,6 +12,7 @@ import '../model/restaurant.dart';
 import '../model/history.dart';
 import '../model/orders.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key key}) : super(key: key);
@@ -160,6 +161,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           appBar: AppBar(
             // automaticallyImplyLeading: false,
+            title: Text('Orders Completed Today', style: TextStyle(color: kMainColor),),
             iconTheme: IconThemeData(color: kMainColor),
             brightness: Brightness.light,
             elevation: 1,
@@ -198,49 +200,91 @@ class _HistoryPageState extends State<HistoryPage> {
         child: ListView(
           children: <Widget>[
             Container(
+              padding: EdgeInsets.only(top: 10, left: 20, bottom: 10),
               color: Colors.red,
-              height: 50.0,
+              // height: 50.0,
               child: Text(
                 'Today',
                 style: TextStyle(fontSize: 30),
               ),
             ),
             !(orderHistory.orders.length == 0)
-                ? GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: orderHistory.orders.length,
-                    gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200,
-                        mainAxisSpacing: 50,
-                        childAspectRatio: 1,
-                        crossAxisSpacing: 30),
-                    itemBuilder: (BuildContext context, int index) {
-                      return new GestureDetector(
-                        child: new Card(
-                          child: new Container(
-                            color: kMainColor,
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                    'Item ${orderHistory.orders[index].orderId}', style: TextStyle(color: Colors.white),),
-                                Text(
-                                    'Item ${orderHistory.orders[index].total}', style: TextStyle(color: Colors.white,)),
-                              ],
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => Dialog(
-                              child: Receipt(order: orderHistory.orders[index]),
-                            ),
-                          );
-                        },
-                      );
-                    })
+                ? Container(
+                  padding: EdgeInsets.all(15),
+                  child: GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: orderHistory.orders.length,
+                      gridDelegate: new SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          mainAxisSpacing: 50,
+                          childAspectRatio: 1,
+                          crossAxisSpacing: 30),
+                      itemBuilder: (BuildContext context, int index) {
+                        return new GestureDetector(
+                          child: Stack(
+                                children: <Widget>[
+                                  new Container(
+                                    padding: EdgeInsets.only(top: 10),
+                                    color: kMainColor,
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text('Order#',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        Text(
+                                            '${orderHistory.orders[index].orderId}',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
+                                  ),
+
+                                  Center(
+
+                                    
+
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                            '${DateFormat.jm().format(DateTime.fromMillisecondsSinceEpoch(orderHistory.orders[index].date))}',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 25)),
+
+                                                Text(
+                                        '\$${orderHistory.orders[index].total.toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 15)),
+                                      ],
+                                    ),
+                                  )
+                                  // Center(
+                                  //   child: Text(
+                                  //       '\$${orderModel.orders[index].total.toStringAsFixed(2)}',
+                                  //       style: TextStyle(
+                                  //           color: Colors.white,
+                                  //           fontWeight: FontWeight.w800,
+                                  //           fontSize: 25)),
+                                  // )
+                                ],
+                              ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => Dialog(
+                                child: Receipt(order: orderHistory.orders[index]),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                )
                 : Container(),
           ],
         ),
