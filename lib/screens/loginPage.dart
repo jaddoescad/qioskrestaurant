@@ -36,12 +36,13 @@ class _LoginPageState extends State<LoginPage> {
     authHandler.checkIfUserExists(context).then((success) {
       print(success);
       if (success == true) {
-        Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => WillPopScope(
-          onWillPop: () async {
-           return false;
-          },
-        child: OrdersPage(),
-        )));
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (ctx) => WillPopScope(
+                  onWillPop: () async {
+                    return false;
+                  },
+                  child: OrdersPage(),
+                )));
         setState(() {
           loader = false;
         });
@@ -50,8 +51,16 @@ class _LoginPageState extends State<LoginPage> {
           loader = false;
         });
       }
+    }).catchError((onError) {
+      if (onError != null) {
+      setState(() {
+        loader = false;
+      });
+      }
+
     });
   }
+
   /// Normally the signin buttons should be contained in the SignInPage
   @override
   Widget build(BuildContext context) {
@@ -177,7 +186,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void submit() async {
-
     if (this._formKey.currentState.validate()) {
       setState(() {
         loader = true;
@@ -185,37 +193,36 @@ class _LoginPageState extends State<LoginPage> {
       _formKey.currentState.save();
 
       // Save our form now.
-        try {
+      try {
         await authHandler
             .handleSignInEmail(_data.email, _data.password, context)
             .then((FirebaseUser user) async {
-          await Future.delayed(const Duration(milliseconds: 500), (){});
+          await Future.delayed(const Duration(milliseconds: 500), () {});
           setState(() {
             loader = false;
           });
 
-    //       print('success');
-         Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) => WillPopScope(
-          onWillPop: () async {
-           return false;
-          },
-        child: OrdersPage(),
-        )));
-
+          //       print('success');
+          Navigator.of(context).push(CupertinoPageRoute(
+              builder: (ctx) => WillPopScope(
+                    onWillPop: () async {
+                      return false;
+                    },
+                    child: OrdersPage(),
+                  )));
         });
-        } catch (error) {
-          setState(() {
-            loader = false;
-          });
-          print(error.toString());
-          //clear provider
-          //signout
-          showErrorDialog(context, 'There was an error authenticating user');
-        }
+      } catch (error) {
+        setState(() {
+          loader = false;
+        });
+        print(error.toString());
+        //clear provider
+        //signout
+        showErrorDialog(context, 'There was an error authenticating user');
       }
     }
   }
-
+}
 
 class _LoginData {
   String email = '';

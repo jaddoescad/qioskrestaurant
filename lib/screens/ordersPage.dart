@@ -14,6 +14,7 @@ import '../model/history.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:audioplayers/audio_cache.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({Key key}) : super(key: key);
@@ -31,6 +32,7 @@ class _OrdersPageState extends State<OrdersPage> {
     1: Text('History'),
   };
   StreamSubscription<QuerySnapshot> _orderStream;
+  static AudioCache player = new AudioCache();
 
   @override
   void dispose() {
@@ -80,6 +82,11 @@ class _OrdersPageState extends State<OrdersPage> {
               onData.documentChanges.forEach((order) {
                 if (order.type == DocumentChangeType.added) {
                   orderModel.addSingleOrder([order.document]);
+                  //play sound
+                  const alarmAudioPath = "music/ping.wav";
+                  player.play(alarmAudioPath);
+
+
                 } else if (order.type == DocumentChangeType.modified) {
                 } else if (order.type == DocumentChangeType.removed) {}
               });
@@ -176,8 +183,9 @@ class _OrdersPageState extends State<OrdersPage> {
           padding: EdgeInsets.all(15),
           child: ListView(
             children: <Widget>[
-              !(orderModel.orders.length == 0)
+              !(orderModel.orders.length == 0 && orderModel.orders.length < 0)
                   ? GridView.builder(
+
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: orderModel.orders.length,

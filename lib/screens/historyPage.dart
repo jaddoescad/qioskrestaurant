@@ -61,32 +61,13 @@ class _HistoryPageState extends State<HistoryPage> {
           .orderBy('date', descending: true)
           .startAt([midnight])
           .endAt([lastMidnight])
-          .limit(7)
+          .limit(25)
           .getDocuments()
           .then((docs) {
             historyModel.addOrders(docs.documents);
             setState(() {
               loader = false;
             });
-            _orderStream = Firestore.instance
-                .collection('Orders')
-                .where("r_id", isEqualTo: restaurant.id)
-                .where('status', isEqualTo: 'complete')
-                .orderBy('date', descending: true)
-                .endBefore([
-                  docs.documents?.isNotEmpty ?? false
-                      ? docs.documents.first['date']
-                      : null
-                ])
-                .snapshots()
-                .listen((onData) {
-                  onData.documentChanges.forEach((order) {
-                    if (order.type == DocumentChangeType.added) {
-                      historyModel.addSingleOrder([order.document]);
-                    } else if (order.type == DocumentChangeType.modified) {
-                    } else if (order.type == DocumentChangeType.removed) {}
-                  });
-                });
           })
           .catchError((onError) {
             setState(() {
