@@ -85,8 +85,6 @@ class _OrdersPageState extends State<OrdersPage> {
                   //play sound
                   const alarmAudioPath = "music/ping.wav";
                   player.play(alarmAudioPath);
-
-
                 } else if (order.type == DocumentChangeType.modified) {
                 } else if (order.type == DocumentChangeType.removed) {}
               });
@@ -185,7 +183,6 @@ class _OrdersPageState extends State<OrdersPage> {
             children: <Widget>[
               !(orderModel.orders.length == 0 && orderModel.orders.length < 0)
                   ? GridView.builder(
-
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: orderModel.orders.length,
@@ -346,6 +343,20 @@ class Receipt extends StatelessWidget {
                                     fontSize: 17,
                                     color: kMainColor,
                                     fontWeight: FontWeight.w500)),
+                            Text('Name : ${order.userName.toUpperCase()}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: kMainColor,
+                                    fontWeight: FontWeight.w500)),
+                            Text('Status: ${order.eatWhere}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: kMainColor,
+                                    fontWeight: FontWeight.w500))
                           ],
                         ),
                       ),

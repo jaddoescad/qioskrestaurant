@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//fetch all orders
-//create order
-//listen to change in orders
 
 class OrderItem {
   String generatedId;
@@ -25,6 +22,8 @@ class OrderItem {
 
 class Order {
   String userId;
+  String userName;
+  String eatWhere;
   String orderId;
   String status;
   double subtotal;
@@ -44,6 +43,8 @@ class Order {
   Order(
       {this.userId,
       this.orderId,
+      this.userName,
+      this.eatWhere,
       this.status,
       this.subtotal,
       this.taxes,
@@ -113,6 +114,8 @@ class RestaurantOrders with ChangeNotifier {
         order.data['date'],
         order.data.containsKey('archived') ? order.data['archived'] : false,
         order.data['notification_id'],
+        order.data['eatingWhere'],
+        order.data['name']
       );
     });
     _orders.sort((a, b) {
@@ -134,6 +137,8 @@ class RestaurantOrders with ChangeNotifier {
         order.data['date'],
         order.data.containsKey('archived') ? order.data['archived'] : false,
         order.data['notification_id'],
+        order.data['eatingWhere'],
+        order.data['name']
       );
     });
     _orders.sort((a, b) {
@@ -142,7 +147,7 @@ class RestaurantOrders with ChangeNotifier {
   }
 
   void addOrder(String orderId, userId, rname, orderJson, status, subtotal,
-      taxes, total, date, archived, notificationId) {
+      taxes, total, date, archived, notificationId, eatingWhere, name) {
     final order = Order(
         orderId: orderId,
         status: status,
@@ -152,7 +157,10 @@ class RestaurantOrders with ChangeNotifier {
         date: date,
         rname: rname,
         archived: archived,
-        notificationId: notificationId);
+        notificationId: notificationId,
+        userName: name,
+        eatWhere: eatingWhere,
+        );
 
     orderJson['items'].forEach((final key, final orderItem) {
       order.addOrderItem(orderItem);
